@@ -7,6 +7,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { PostCard } from "@/components/postCard";
 import { Section } from "@/components/section";
+import Link from "next/link";
+import { LogoutButton } from "@/components/buttons";
 
 export default async function Home() {
   const cookieStore = cookies();
@@ -26,8 +28,8 @@ export default async function Home() {
                 {/* <FiPlusCircle size={30} /> */}
               </div>
               <div className="mt-10 text-lg flex flex-col items-start gap-5">
-                <p>Home</p>
-                <p>Saved Notes</p>
+                <Link href="/"> Home </Link>
+                <Link href="/"> Saved Notes </Link>
                 <CreateNoteModal
                   image={
                     "https://pbs.twimg.com/profile_images/1689224398639882240/TbTgFZFN_400x400.jpg"
@@ -37,30 +39,34 @@ export default async function Home() {
               </div>
             </div>
             <div>
-              <div className="mt-10 text-lg flex flex-col items-start gap-5">
-                <p>Home</p>
-                <p>Saved Notes</p>
-                <CreateNoteModal
-                  image={
-                    "https://pbs.twimg.com/profile_images/1689224398639882240/TbTgFZFN_400x400.jpg"
-                  }
-                  name={"Zahin Afsar"}
-                />
-              </div>
-              <div className="flex items-center gap-3">
-                <Image
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                  src="https://pbs.twimg.com/profile_images/1689224398639882240/TbTgFZFN_400x400.jpg"
-                  alt=""
-                />
-                <p className="text-xl font-[500]">Zahin Afsar</p>
+              <div className="dropdown dropdown-top dropdown-end">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="flex items-center gap-3"
+                >
+                  <Image
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                    src="https://pbs.twimg.com/profile_images/1689224398639882240/TbTgFZFN_400x400.jpg"
+                    alt=""
+                  />
+                  <p className="text-xl font-[500]">Zahin Afsar</p>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] text-white menu mb-2 p-2 shadow rounded-box w-52 bg-slate-600"
+                >
+                  <li>
+                    <LogoutButton />
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
         </Section>
-        <Section className="w-[46%] overflow-auto border-x border-slate-700">
+        <Section className="min-w-[46%] overflow-auto border-x border-slate-700">
           <div className="flex flex-col">
             <PostCard
               title={"Zahin Afsar"}

@@ -96,11 +96,10 @@ export default function Login({ searchParams }: Props) {
             />
           </div>
           <div className="mt-4">
-            <p className="text-center text-red-500">{error}</p>
+            <p className="text-center text-red-500 mb-2">{error}</p>
             <SubmitButton text="Login" />
           </div>
         </form>
-        {/* Sign up  Link */}
         <div className="mt-6 text-blue-500 text-center">
           <Link href="/signup" className="hover:underline">
             Sign up Here

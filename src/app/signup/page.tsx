@@ -16,17 +16,17 @@ export default function Signup({ searchParams }: Props) {
   async function createUser(formData: FormData) {
     "use server";
 
-    let student_id = formData.get("student_id");
-    let full_name = formData.get("full_name");
-    let password = formData.get("password");
-    let profileFile = formData.get("student_image");
-    let profile;
+    const student_id = formData.get("student_id");
+    const full_name = formData.get("full_name");
+    const password = formData.get("password");
+    const avatarFile = formData.get("avatar");
+    let avatar;
 
     try {
-      const img = await uploadFile(profileFile as File, student_id);
-      profile = img;
+      const img = await uploadFile(avatarFile as File, student_id);
+      avatar = img;
     } catch (err) {
-      redirect("/login?error=Image Upload Failed!");
+      redirect("/signup?error=Image Upload Failed!");
     }
 
     // mutate data
@@ -36,12 +36,12 @@ export default function Signup({ searchParams }: Props) {
       student_id,
       full_name,
       password,
-      profile,
+      avatar,
     };
 
     try {
       const result = await connection.query(
-        "INSERT INTO user (student_id, full_name, password, profile) VALUES (?, ?, ?, ?)",
+        "INSERT INTO user (student_id, full_name, password, avatar) VALUES (?, ?, ?, ?)",
         Object.values(rawData)
       );
       console.log({ result });
@@ -60,23 +60,18 @@ export default function Signup({ searchParams }: Props) {
       </div>
       <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
         <h1 className="text-2xl font-semibold mb-4">Register</h1>
-        <form action={createUser} method="POST">
+        <form action={createUser}>
           <div className="flex flex-col justify-center items-center gap-2 mb-2">
             <div className="w-[100px] h-[100px] rounded-full flex items-center justify-center overflow-hidden bg-slate-600">
               <FaUser size={90} className="translate-y-[6px]" />
             </div>
             <label
-              htmlFor="file"
+              htmlFor="avatar"
               className="btn btn-sm btn-outline text-gray-600"
             >
               Select Profile Picture
             </label>
-            <input
-              type="file"
-              name="student_image"
-              id="file"
-              className="hidden"
-            />
+            <input type="file" name="avatar" id="avatar" className="hidden" />
           </div>
           <div className="mb-4">
             <label htmlFor="student_id" className="block text-gray-600">
@@ -115,11 +110,10 @@ export default function Signup({ searchParams }: Props) {
             />
           </div>
           <div className="mt-4">
-            <p className="text-center text-red-500">{error}</p>
+            <p className="text-center text-red-500 mb-2">{error}</p>
             <SubmitButton text="Sign Up" />
           </div>
         </form>
-        {/* Sign up  Link */}
         <div className="mt-6 text-blue-500 text-center">
           <Link href="/login" className="hover:underline">
             Already have an account? Login Here
