@@ -1,9 +1,58 @@
+import { connectDb } from "@/db/db";
+import { hashPassword } from "@/helper/algo";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import React from "react";
+import { cookies } from "next/headers";
+import { SubmitButton } from "@/components/submitButton";
 
 type Props = {};
 
 export default function Login({}: Props) {
+  async function handleSignin(formData: FormData) {
+    "use server";
+
+    const rawFormData = {
+      student_id: formData.get("student_id"),
+      password: formData.get("password"),
+    };
+
+    let success = false;
+
+    const connection = await connectDb();
+
+    try {
+      const res = await connection.query(
+        "SELECT * FROM user WHERE student_id = ?",
+        Object.values(rawFormData)
+      );
+      const user = res?.at(0)?.at(0);
+
+      if (!user) throw new Error("User not found!");
+      const passedPassword = String(formData.get("password"));
+
+      const dbHashedPassword = user.password;
+      const hashedPassword = hashPassword(passedPassword);
+
+      if (dbHashedPassword == hashedPassword) {
+        console.log("Login successfull!");
+        const cookieStore = cookies();
+        cookieStore.set("user", JSON.stringify(user));
+        success = true;
+        return redirect("/");
+      } else {
+        console.log("Incorrect passwrd!", {
+          dbHashedPassword,
+          passedPassword,
+          hashedPassword,
+        });
+      }
+    } catch (err) {
+      if (err) throw err;
+      console.log("Error in login", err);
+    }
+  }
+
   return (
     <div className="bg-gray-100 flex justify-center items-center h-screen">
       <div className="w-1/2 h-screen bg-slate-700 flex justify-center items-center">
@@ -13,16 +62,16 @@ export default function Login({}: Props) {
       </div>
       <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
         <h1 className="text-2xl font-semibold mb-4">Login</h1>
-        <form action="#" method="POST">
+        <form action={handleSignin}>
           <div className="mb-4">
-            <label htmlFor="studentId" className="block text-gray-600">
-              Student Id
+            <label htmlFor="student_id" className="block text-gray-600">
+              Student ID
             </label>
             <input
               type="text"
-              id="studentId"
-              name="studentId"
-              className="w-full border rounded-md py-2 px-3 bg-slate-200"
+              id="student_id"
+              name="student_id"
+              className="w-full border rounded-md py-2 px-3 bg-slate-200 text-black"
               autoComplete="off"
             />
           </div>
@@ -34,16 +83,11 @@ export default function Login({}: Props) {
               type="password"
               id="password"
               name="password"
-              className="w-full border rounded-md py-2 px-3 bg-slate-200"
+              className="w-full border rounded-md py-2 px-3 bg-slate-200 text-black"
               autoComplete="off"
             />
           </div>
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 mt-4 w-full"
-          >
-            Login
-          </button>
+          <SubmitButton text="Login" />
         </form>
         {/* Sign up  Link */}
         <div className="mt-6 text-blue-500 text-center">

@@ -23,19 +23,3 @@ FROM user u
 LEFT JOIN user_profile up ON u.id = up.user_id
 LEFT JOIN code c ON u.id = c.user_id
 LEFT JOIN code_performance cp ON c.id = cp.code_id
-
-
--- get_user:
-SELECT
-    u.id,
-    u.username,
-    u.email,
-    u.created_at,
-    u.updated_at,
-    up.first_name,
-    up.last_name,
-    c.algorithm,
-    c.variation,
-    c.code,
-    cp.time,
-    cp.memory;;;;;;

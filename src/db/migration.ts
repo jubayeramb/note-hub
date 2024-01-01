@@ -18,17 +18,9 @@ export async function initDb() {
     }
   }
 
-  const d = await connection.query("SELECT 1 + 1 AS solution");
+  // const d = await connection.query("SELECT 1 + 1 AS solution");
 
-  console.log("The solution is: ", d);
-
-  // connection.query(
-  //   "SELECT 1 + 1 AS solution",
-  //   function (error: any, results: { solution: any }[], fields: any) {
-  //     //   if (error) throw error;
-  //     console.log("The solution is: ", results[0].solution);
-  //   }
-  // );
+  // console.log("The solution is: ", d);
 }
 
 const loadFilesByExtension = (dir: string, extension: string) => {

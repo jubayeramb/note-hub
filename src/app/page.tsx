@@ -1,78 +1,20 @@
-"use client";
-
 /* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
-import { Carousel } from "react-responsive-carousel";
-import { FaRegHeart, FaHeart, FaBookmark, FaRegBookmark } from "react-icons/fa";
+import { FaHeart, FaRegBookmark } from "react-icons/fa";
 import { FiPlusCircle } from "react-icons/fi";
 import { CreateNoteModal } from "@/components/createNoteModal";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { PostCard } from "@/components/postCard";
+import { Section } from "@/components/section";
 
-const notes = [
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-];
+export default async function Home() {
+  const cookieStore = cookies();
 
-export const Section = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => <div className={"w-full h-full " + className}>{children}</div>;
+  const user = cookieStore.get("user");
+  console.log("user:", user);
+  if (!user) return redirect("/login");
 
-export const PostCard = ({
-  title,
-  createdAt,
-  description,
-  image,
-}: {
-  title: string;
-  description: string;
-  image: string;
-  createdAt: string;
-}) => (
-  <div className="border-b border-slate-700 p-6">
-    <div className="bg-slate-700 rounded-lg w-full min-h-[500px] ">
-      <div className="flex flex-col overflow-hidden">
-        <div className="m-3">
-          <div className="flex gap-3 items-center">
-            <Image
-              width={35}
-              height={35}
-              className="rounded-full"
-              src="https://pbs.twimg.com/profile_images/1689224398639882240/TbTgFZFN_400x400.jpg"
-              alt=""
-            />
-            <div>
-              <div className="text-sm font-bold">{title}</div>
-              <div className="text-xs">{createdAt}</div>
-            </div>
-          </div>
-          <div className="text-sm text-slate-300 mt-3">{description}</div>
-        </div>
-        <Carousel showThumbs={false} showIndicators={false}>
-          {notes.map((note, key) => (
-            <img key={key} width={455} src={note} />
-          ))}
-        </Carousel>
-      </div>
-      <div className="flex justify-between items-center p-6">
-        <div className="flex items-center gap-2">
-          <FaRegHeart />
-          <p className="font-bold">100</p>
-        </div>
-        <FaBookmark />
-      </div>
-    </div>
-  </div>
-);
-
-export default function Home() {
   return (
     <div className="h-screen flex justify-center overflow-hidden">
       <div className="container flex gap-6">
