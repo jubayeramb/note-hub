@@ -5,10 +5,15 @@ import { redirect } from "next/navigation";
 import React from "react";
 import { cookies } from "next/headers";
 import { SubmitButton } from "@/components/submitButton";
+import App from "next/app";
 
-type Props = {};
+type Props = {
+  searchParams: { error: string };
+};
 
-export default function Login({}: Props) {
+export default function Login({ searchParams }: Props) {
+  const error = searchParams.error;
+
   async function handleSignin(formData: FormData) {
     "use server";
 
@@ -28,7 +33,10 @@ export default function Login({}: Props) {
       );
       const user = res?.at(0)?.at(0);
 
-      if (!user) throw new Error("User not found!");
+      if (!user) {
+        return redirect("/login?error=User Not Found!");
+      }
+
       const passedPassword = String(formData.get("password"));
 
       const dbHashedPassword = user.password;
@@ -41,7 +49,7 @@ export default function Login({}: Props) {
         success = true;
         return redirect("/");
       } else {
-        console.log("Incorrect passwrd!", {
+        console.log("Incorrect password!", {
           dbHashedPassword,
           passedPassword,
           hashedPassword,
@@ -87,7 +95,10 @@ export default function Login({}: Props) {
               autoComplete="off"
             />
           </div>
-          <SubmitButton text="Login" />
+          <div className="mt-4">
+            <p className="text-center text-red-500">{error}</p>
+            <SubmitButton text="Login" />
+          </div>
         </form>
         {/* Sign up  Link */}
         <div className="mt-6 text-blue-500 text-center">

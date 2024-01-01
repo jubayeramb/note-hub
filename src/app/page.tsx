@@ -10,9 +10,7 @@ import { Section } from "@/components/section";
 
 export default async function Home() {
   const cookieStore = cookies();
-
   const user = cookieStore.get("user");
-  console.log("user:", user);
   if (!user) return redirect("/login");
 
   return (
@@ -38,15 +36,27 @@ export default async function Home() {
                 />
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Image
-                width={40}
-                height={40}
-                className="rounded-full"
-                src="https://pbs.twimg.com/profile_images/1689224398639882240/TbTgFZFN_400x400.jpg"
-                alt=""
-              />
-              <p className="text-xl font-[500]">Zahin Afsar</p>
+            <div>
+              <div className="mt-10 text-lg flex flex-col items-start gap-5">
+                <p>Home</p>
+                <p>Saved Notes</p>
+                <CreateNoteModal
+                  image={
+                    "https://pbs.twimg.com/profile_images/1689224398639882240/TbTgFZFN_400x400.jpg"
+                  }
+                  name={"Zahin Afsar"}
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <Image
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                  src="https://pbs.twimg.com/profile_images/1689224398639882240/TbTgFZFN_400x400.jpg"
+                  alt=""
+                />
+                <p className="text-xl font-[500]">Zahin Afsar</p>
+              </div>
             </div>
           </div>
         </Section>

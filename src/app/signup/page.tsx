@@ -1,28 +1,47 @@
 import { SubmitButton } from "@/components/submitButton";
 import { connectDb } from "@/db/db";
-import { hashPassword } from "@/helper/algo";
+import { uploadFile } from "@/helper/media";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 import { FaUser } from "react-icons/fa";
 
-type Props = {};
+type Props = {
+  searchParams: { error: string };
+};
 
-export default function Login({}: Props) {
+export default function Signup({ searchParams }: Props) {
+  const error = searchParams.error;
+
   async function createUser(formData: FormData) {
     "use server";
 
+    let student_id = formData.get("student_id");
+    let full_name = formData.get("full_name");
+    let password = formData.get("password");
+    let profileFile = formData.get("student_image");
+    let profile;
+
+    try {
+      const img = await uploadFile(profileFile as File, student_id);
+      profile = img;
+    } catch (err) {
+      redirect("/login?error=Image Upload Failed!");
+    }
+
     // mutate data
     const connection = await connectDb();
+
     const rawData = {
-      student_id: formData.get("student_id"),
-      full_name: formData.get("full_name"),
-      password: hashPassword(formData.get("password") as string),
+      student_id,
+      full_name,
+      password,
+      profile,
     };
 
     try {
       const result = await connection.query(
-        "INSERT INTO user (student_id, full_name, password) VALUES (?, ?, ?)",
+        "INSERT INTO user (student_id, full_name, password, profile) VALUES (?, ?, ?, ?)",
         Object.values(rawData)
       );
       console.log({ result });
@@ -52,7 +71,12 @@ export default function Login({}: Props) {
             >
               Select Profile Picture
             </label>
-            <input type="file" id="file" className="hidden" />
+            <input
+              type="file"
+              name="student_image"
+              id="file"
+              className="hidden"
+            />
           </div>
           <div className="mb-4">
             <label htmlFor="student_id" className="block text-gray-600">
@@ -90,7 +114,10 @@ export default function Login({}: Props) {
               autoComplete="off"
             />
           </div>
-          <SubmitButton text="Sign Up" />
+          <div className="mt-4">
+            <p className="text-center text-red-500">{error}</p>
+            <SubmitButton text="Sign Up" />
+          </div>
         </form>
         {/* Sign up  Link */}
         <div className="mt-6 text-blue-500 text-center">

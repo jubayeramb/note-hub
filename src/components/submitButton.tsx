@@ -8,7 +8,7 @@ export function SubmitButton({ text }: { text: string }) {
   return (
     <button
       type="submit"
-      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 mt-4 w-full"
+      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full"
       aria-disabled={pending}
     >
       {pending ? "Loading..." : text}

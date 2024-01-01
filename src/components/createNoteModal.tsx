@@ -20,7 +20,7 @@ export function CreateNoteModal({
         onClick={() => setOpen(true)}
         className="flex items-center gap-2 border rounded-full pl-3 pr-4 py-2 mt-10"
       >
-        <FiPlusCircle size={25} />
+        <FiPlusCircle size={25} /> 
         <p>Create Note</p>
       </button>
       <dialog open={open} className="modal bg-[#00000080]">
