@@ -28,6 +28,8 @@ export default function Login({ searchParams }: Props) {
         Object.values(rawFormData)
       );
       const user = res?.at(0)?.at(0);
+      console.log({user: rawFormData});
+      
 
       if (!user) {
         return redirect("/login?error=User Not Found!");

@@ -11,7 +11,6 @@ import Link from "next/link";
 import { LogoutButton } from "@/components/buttons";
 import { executeQuery } from "@/db/query";
 import { Note, User } from "@/types";
-import { generateAvatarUrl } from "@/helper/media";
 
 export default async function Home() {
   let notes: Note[] = [];
@@ -45,9 +44,8 @@ export default async function Home() {
                 <Link href="/"> Saved Notes </Link>
                 <CreateNoteModal
                   image={
-                    userData.avatar
-                      ? generateAvatarUrl(userData.avatar)
-                      : "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1200px-User-avatar.svg.png"
+                    userData.avatar ||
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1200px-User-avatar.svg.png"
                   }
                   name={userData.full_name}
                 />
@@ -60,9 +58,8 @@ export default async function Home() {
                   height={40}
                   className="rounded-full w-10 h-10"
                   src={
-                    userData.avatar
-                      ? generateAvatarUrl(userData.avatar)
-                      : "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1200px-User-avatar.svg.png"
+                    userData.avatar ||
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1200px-User-avatar.svg.png"
                   }
                   alt="Avatar"
                 />

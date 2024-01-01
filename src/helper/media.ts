@@ -22,7 +22,3 @@ export const uploadFile = async (
     throw error;
   }
 };
-
-export const generateAvatarUrl = (name: string) => {
-  return `/uploads/${name}`
-}

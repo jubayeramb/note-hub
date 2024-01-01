@@ -1,6 +1,7 @@
 "use client";
 
 import { createNote } from "@/app/actions/createNote";
+import { uploadFile } from "@/helper/media";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 /* eslint-disable @next/next/no-img-element */
@@ -15,14 +16,13 @@ export function CreateNoteModal({
   image: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [images, setImages] = useState<FileList>();
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData);
-
-    console.log("data:", data);
+    const data = { ...Object.fromEntries(formData), images };
 
     await createNote(data);
     setOpen(false);
@@ -38,7 +38,7 @@ export function CreateNoteModal({
         <p>Create Note</p>
       </button>
       <dialog open={open} className="modal bg-[#00000080]">
-        <div className="modal-box">
+        <div className="modal-box overflow-auto">
           <form onSubmit={onSubmit}>
             <div>
               <div className="flex justify-between items-center">
@@ -46,7 +46,7 @@ export function CreateNoteModal({
                   <Image
                     width={35}
                     height={35}
-                    className="rounded-full"
+                    className="rounded-full w-10 h-10"
                     src={image}
                     alt=""
                   />
@@ -70,6 +70,20 @@ export function CreateNoteModal({
                 className="w-full bg-slate-700 rounded-md p-3 mt-6 text-base text-white"
                 placeholder="Write your note here..."
               />
+
+              <div className="grid grid-cols-3 gap-2">
+                {images &&
+                  Array.from(images).map((image) => (
+                    <Image
+                      width={100}
+                      height={100}
+                      key={image.name}
+                      src={URL.createObjectURL(image)}
+                      alt={image.name}
+                      className="h-40 w-[100%] object-contain bg-black"
+                    />
+                  ))}
+              </div>
               <label
                 htmlFor="file"
                 className="btn btn-outline flex items-center gap-2 mt-4"
@@ -77,7 +91,14 @@ export function CreateNoteModal({
                 <IoMdImage size={20} />
                 <p className="text-sm">Select image</p>
               </label>
-              <input type="file" id="file" className="hidden" />
+              <input
+                type="file"
+                id="file"
+                name="images"
+                multiple
+                className="hidden"
+                onChange={(v) => v.target.files && setImages(v.target.files)}
+              />
             </div>
             <div className="modal-action">
               <button

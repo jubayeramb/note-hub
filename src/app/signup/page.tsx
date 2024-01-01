@@ -37,11 +37,10 @@ export default function Signup({ searchParams }: Props) {
     };
 
     try {
-      const result = await executeQuery("create_user", Object.values(rawData));
-      console.log({ result });
-      redirect("/login");
+      await executeQuery("create_user", Object.values(rawData));
     } catch (error) {
       console.log(error);
+      return redirect(`/signup?error=${'Something went wrong!'}`);
     }
     return redirect("/login");
   }

@@ -16,3 +16,7 @@ ORDER BY
     note.created_at DESC,
     note.id DESC,
     user.id DESC;
+
+-- create_note:
+INSERT INTO note (title, content, user_id) VALUES (?, ?, ?);
+INSERT INTO image (note_id, image) VALUES (?, ?);
