@@ -21,8 +21,7 @@ export default async function Home() {
 
   const userData = JSON.parse(user?.value as string) as User;
   try {
-    const res = await executeQuery<Note[][]>("get_all_notes");
-    notes = res[0];
+    notes = await executeQuery<Note[]>("get_all_notes");
   } catch (error) {
     console.log(error);
   }
@@ -79,6 +78,7 @@ export default async function Home() {
                     authorImage={note.author_image}
                     author={note.author_name}
                     createdAt={note.created_at}
+                    images={note.images ? note.images.split(",") : []}
                   />
                 ))
               : null}

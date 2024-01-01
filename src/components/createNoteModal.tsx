@@ -18,16 +18,6 @@ export function CreateNoteModal({
   const [open, setOpen] = useState(false);
   const [images, setImages] = useState<FileList>();
 
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
-    const data = { ...Object.fromEntries(formData), images };
-
-    await createNote(data);
-    setOpen(false);
-  };
-
   return (
     <>
       <button
@@ -39,7 +29,7 @@ export function CreateNoteModal({
       </button>
       <dialog open={open} className="modal bg-[#00000080]">
         <div className="modal-box overflow-auto">
-          <form onSubmit={onSubmit}>
+          <form action={createNote}>
             <div>
               <div className="flex justify-between items-center">
                 <div className="flex gap-3 items-center">
@@ -62,6 +52,7 @@ export function CreateNoteModal({
                 name="title"
                 className="w-full bg-slate-700 rounded-md p-3 mt-6 text-base text-white"
                 placeholder="Note Title"
+                required
               />
 
               <textarea
@@ -104,6 +95,7 @@ export function CreateNoteModal({
               <button
                 className="btn btn-sm btn-ghost text-white"
                 onClick={() => setOpen(false)}
+                type="button"
               >
                 Close
               </button>

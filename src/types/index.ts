@@ -5,6 +5,7 @@ export type Note = {
   author_name: string;
   author_image: string;
   created_at: string;
+  images: string;
 };
 
 export type User = {

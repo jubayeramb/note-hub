@@ -5,28 +5,20 @@ import Image from "next/image";
 import { FaRegHeart, FaBookmark } from "react-icons/fa";
 import { Carousel } from "react-responsive-carousel";
 
-export const notes = [
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-  "https://mzucker.github.io/images/noteshrink/notesA1_output.png",
-];
-
 export const PostCard = ({
   author,
   title,
   createdAt,
   description,
   authorImage,
+  images = [],
 }: {
   author: string;
   title: string;
   description: string;
   authorImage: string;
   createdAt: string;
+  images: string[];
 }) => (
   <div className="border-b border-slate-700 p-6">
     <div className="bg-slate-700 rounded-lg w-full min-h-[500px] ">
@@ -53,11 +45,13 @@ export const PostCard = ({
           </div>
           <div className="text-sm text-slate-300 mt-3">{description}</div>
         </div>
-        <Carousel showThumbs={false} showIndicators={false}>
-          {notes.map((note, key) => (
-            <img key={key} width={455} src={note} />
-          ))}
-        </Carousel>
+        {images.length > 0 ? (
+          <Carousel showThumbs={false} showIndicators={false}>
+            {images.map((note, key) => (
+              <img key={key} width={455} src={note} />
+            ))}
+          </Carousel>
+        ) : null}
       </div>
       <div className="flex justify-between items-center p-6">
         <div className="flex items-center gap-2">

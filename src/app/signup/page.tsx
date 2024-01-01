@@ -40,7 +40,7 @@ export default function Signup({ searchParams }: Props) {
       await executeQuery("create_user", Object.values(rawData));
     } catch (error) {
       console.log(error);
-      return redirect(`/signup?error=${'Something went wrong!'}`);
+      return redirect(`/signup?error=${"Something went wrong!"}`);
     }
     return redirect("/login");
   }
@@ -63,7 +63,7 @@ export default function Signup({ searchParams }: Props) {
               type="file"
               id="avatar"
               name="avatar"
-              className="file-input file-input-md file-input-bordered file-input-ghost bg-slate-200 w-full"
+              className="file-input file-input-md file-input-bordered file-input-ghost text-slate-500 bg-slate-200 w-full"
               autoComplete="off"
             />
           </div>

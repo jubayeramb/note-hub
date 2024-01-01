@@ -30,20 +30,19 @@ const generateIndexTypeFile = () => {
 
 generateIndexTypeFile();
 
-export async function executeQuery<DataTypeT>(
+export function executeQuery<DataTypeT>(
   queryName: QueryNames,
   variables: object | any[] | undefined = []
 ): Promise<DataTypeT> {
-  const connection = await connectDb();
+  const connection = connectDb();
 
   const queryVariables =
     variables instanceof Array ? variables : Object.values(variables);
 
-  try {
-    const query = getQuery(queryName);
-    return (await connection.execute(query, queryVariables)) as DataTypeT;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
+  return new Promise<DataTypeT>((resolve, reject) => {
+    connection.query(getQuery(queryName), queryVariables, (err, result) => {
+      if (err) reject(err);
+      else resolve(result);
+    });
+  });
 }

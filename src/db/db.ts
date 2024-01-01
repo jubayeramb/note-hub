@@ -1,16 +1,23 @@
-import { type PoolOptions, createPool } from "mysql2/promise";
+import mysql from "mysql";
 
-const dbConfig: PoolOptions = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  port: Number(process.env.DB_PORT),
-  multipleStatements: true,
-};
+// const dbConfig = {
+//   host: process.env.DB_HOST,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   database: process.env.DB_DATABASE,
+//   port: Number(process.env.DB_PORT),
+//   multipleStatements: true,
+//   insecureAuth: true,
+// };
 
-export const connectDb = async () => {
-  const connection = await createPool(dbConfig);
-  console.log("Database connected");
-  return connection;
+export const connectDb = () => {
+  return mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    port: Number(process.env.DB_PORT),
+    insecureAuth: true,
+    multipleStatements: true,
+  });
 };

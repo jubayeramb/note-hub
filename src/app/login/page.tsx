@@ -23,13 +23,10 @@ export default function Login({ searchParams }: Props) {
     };
 
     try {
-      const res = await executeQuery<User[][]>(
-        "login_user",
-        Object.values(rawFormData)
-      );
-      const user = res?.at(0)?.at(0);
-      console.log({user: rawFormData});
-      
+      const res = await executeQuery<User[][]>("login_user", [
+        rawFormData.student_id,
+      ]);
+      const user = res?.at(0);
 
       if (!user) {
         return redirect("/login?error=User Not Found!");
