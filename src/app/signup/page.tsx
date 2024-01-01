@@ -1,10 +1,10 @@
 import { SubmitButton } from "@/components/submitButton";
 import { connectDb } from "@/db/db";
+import { hashPassword } from "@/helper/algo";
 import { uploadFile } from "@/helper/media";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
-import { FaUser } from "react-icons/fa";
 
 type Props = {
   searchParams: { error: string };
@@ -26,16 +26,15 @@ export default function Signup({ searchParams }: Props) {
       const img = await uploadFile(avatarFile as File, student_id);
       avatar = img;
     } catch (err) {
-      redirect("/signup?error=Image Upload Failed!");
+      return redirect("/signup?error=Image Upload Failed!");
     }
 
-    // mutate data
     const connection = await connectDb();
 
     const rawData = {
       student_id,
       full_name,
-      password,
+      password: hashPassword(password as string),
       avatar,
     };
 
@@ -44,11 +43,10 @@ export default function Signup({ searchParams }: Props) {
         "INSERT INTO user (student_id, full_name, password, avatar) VALUES (?, ?, ?, ?)",
         Object.values(rawData)
       );
-      console.log({ result });
-      redirect("/login");
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      return redirect(`/signup?error=${error.sqlMessage || ""}`);
     }
+    return redirect("/login");
   }
 
   return (
@@ -61,17 +59,17 @@ export default function Signup({ searchParams }: Props) {
       <div className="lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2">
         <h1 className="text-2xl font-semibold mb-4">Register</h1>
         <form action={createUser}>
-          <div className="flex flex-col justify-center items-center gap-2 mb-2">
-            <div className="w-[100px] h-[100px] rounded-full flex items-center justify-center overflow-hidden bg-slate-600">
-              <FaUser size={90} className="translate-y-[6px]" />
-            </div>
-            <label
-              htmlFor="avatar"
-              className="btn btn-sm btn-outline text-gray-600"
-            >
-              Select Profile Picture
+          <div className="mb-4">
+            <label htmlFor="student_id" className="block text-gray-600">
+              Profile Image
             </label>
-            <input type="file" name="avatar" id="avatar" className="hidden" />
+            <input
+              type="file"
+              id="avatar"
+              name="avatar"
+              className="file-input file-input-md file-input-bordered file-input-ghost bg-slate-200 w-full"
+              autoComplete="off"
+            />
           </div>
           <div className="mb-4">
             <label htmlFor="student_id" className="block text-gray-600">

@@ -9,11 +9,22 @@ import { PostCard } from "@/components/postCard";
 import { Section } from "@/components/section";
 import Link from "next/link";
 import { LogoutButton } from "@/components/buttons";
+import { generateAvatarUrl } from "@/helper/media";
+
+type User = {
+  id: number;
+  student_id: string;
+  password: string;
+  full_name: string;
+  avatar: string;
+};
 
 export default async function Home() {
   const cookieStore = cookies();
   const user = cookieStore.get("user");
   if (!user) return redirect("/login");
+
+  const userData = JSON.parse(user?.value as string) as User;
 
   return (
     <div className="h-screen flex justify-center overflow-hidden">
@@ -31,37 +42,21 @@ export default async function Home() {
                 <Link href="/"> Home </Link>
                 <Link href="/"> Saved Notes </Link>
                 <CreateNoteModal
-                  image={
-                    "https://pbs.twimg.com/profile_images/1689224398639882240/TbTgFZFN_400x400.jpg"
-                  }
-                  name={"Zahin Afsar"}
+                  image={generateAvatarUrl(userData.avatar)}
+                  name={userData.full_name}
                 />
               </div>
             </div>
             <div>
-              <div className="dropdown dropdown-top dropdown-end">
-                <div
-                  tabIndex={0}
-                  role="button"
-                  className="flex items-center gap-3"
-                >
-                  <Image
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                    src="https://pbs.twimg.com/profile_images/1689224398639882240/TbTgFZFN_400x400.jpg"
-                    alt=""
-                  />
-                  <p className="text-xl font-[500]">Zahin Afsar</p>
-                </div>
-                <ul
-                  tabIndex={0}
-                  className="dropdown-content z-[1] text-white menu mb-2 p-2 shadow rounded-box w-52 bg-slate-600"
-                >
-                  <li>
-                    <LogoutButton />
-                  </li>
-                </ul>
+              <div className="flex items-center gap-3">
+                <Image
+                  width={40}
+                  height={40}
+                  className="rounded-full w-10 h-10"
+                  src={generateAvatarUrl(userData.avatar)}
+                  alt=""
+                />
+                <p className="text-xl font-[500]">{userData.full_name}</p>
               </div>
             </div>
           </div>
@@ -101,6 +96,7 @@ export default async function Home() {
                 </a>
               </div>
             </div>
+            <LogoutButton />
           </div>
         </Section>
       </div>
