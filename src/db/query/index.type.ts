@@ -1,0 +1,1 @@
+export type QueryNames = 'create_user' | 'login_user' | 'get_all_notes';

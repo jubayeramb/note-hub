@@ -1,5 +1,6 @@
 "use client";
 
+import { dateFormatter } from "@/helper/date";
 import Image from "next/image";
 import { FaRegHeart, FaBookmark } from "react-icons/fa";
 import { Carousel } from "react-responsive-carousel";
@@ -15,14 +16,16 @@ export const notes = [
 ];
 
 export const PostCard = ({
+  author,
   title,
   createdAt,
   description,
-  image,
+  authorImage,
 }: {
+  author: string;
   title: string;
   description: string;
-  image: string;
+  authorImage: string;
   createdAt: string;
 }) => (
   <div className="border-b border-slate-700 p-6">
@@ -34,13 +37,19 @@ export const PostCard = ({
               width={35}
               height={35}
               className="rounded-full"
-              src="https://pbs.twimg.com/profile_images/1689224398639882240/TbTgFZFN_400x400.jpg"
-              alt=""
+              src={
+                authorImage ||
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1200px-User-avatar.svg.png"
+              }
+              alt="Author Image"
             />
             <div>
-              <div className="text-sm font-bold">{title}</div>
-              <div className="text-xs">{createdAt}</div>
+              <div className="text-sm font-bold">{author}</div>
+              <div className="text-xs">{dateFormatter(createdAt)}</div>
             </div>
+          </div>
+          <div className="text-lg font-semibold text-slate-300 mt-3">
+            {title}
           </div>
           <div className="text-sm text-slate-300 mt-3">{description}</div>
         </div>

@@ -16,7 +16,7 @@ export const uploadFile = async (
       path.join(process.cwd(), "public/uploads/" + fileName),
       buffer
     );
-    return fileName;
+    return process.env.BASE_URL + "/uploads/" + fileName;
   } catch (error) {
     console.log("Error occured ", error);
     throw error;

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { initDb } from "@/db/migration";
+// import { initDb } from "@/db/migration";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +16,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await initDb();
+  // await initDb();
   return (
     <html lang="en">
       <body className={inter.className}>{children}</body>

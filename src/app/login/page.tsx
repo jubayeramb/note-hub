@@ -1,11 +1,11 @@
-import { connectDb } from "@/db/db";
 import { hashPassword } from "@/helper/algo";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 import { cookies } from "next/headers";
 import { SubmitButton } from "@/components/submitButton";
-import App from "next/app";
+import { executeQuery } from "@/db/query";
+import { User } from "@/types";
 
 type Props = {
   searchParams: { error: string };
@@ -22,13 +22,9 @@ export default function Login({ searchParams }: Props) {
       password: formData.get("password"),
     };
 
-    let success = false;
-
-    const connection = await connectDb();
-
     try {
-      const res = await connection.query(
-        "SELECT * FROM user WHERE student_id = ?",
+      const res = await executeQuery<User[][]>(
+        "login_user",
         Object.values(rawFormData)
       );
       const user = res?.at(0)?.at(0);
@@ -39,14 +35,13 @@ export default function Login({ searchParams }: Props) {
 
       const passedPassword = String(formData.get("password"));
 
-      const dbHashedPassword = user.password;
+      const dbHashedPassword = +user.password;
       const hashedPassword = hashPassword(passedPassword);
 
       if (dbHashedPassword == hashedPassword) {
         console.log("Login successfull!");
         const cookieStore = cookies();
         cookieStore.set("user", JSON.stringify(user));
-        success = true;
         return redirect("/");
       } else {
         console.log("Incorrect password!", {

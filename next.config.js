@@ -4,8 +4,13 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "pbs.twimg.com",
+        hostname: "upload.wikimedia.org",
         port: "",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3000",
       },
     ],
   },

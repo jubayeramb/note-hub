@@ -1,5 +1,5 @@
 import { SubmitButton } from "@/components/submitButton";
-import { connectDb } from "@/db/db";
+import { executeQuery } from "@/db/query";
 import { hashPassword } from "@/helper/algo";
 import { uploadFile } from "@/helper/media";
 import Link from "next/link";
@@ -29,8 +29,6 @@ export default function Signup({ searchParams }: Props) {
       return redirect("/signup?error=Image Upload Failed!");
     }
 
-    const connection = await connectDb();
-
     const rawData = {
       student_id,
       full_name,
@@ -39,12 +37,11 @@ export default function Signup({ searchParams }: Props) {
     };
 
     try {
-      const result = await connection.query(
-        "INSERT INTO user (student_id, full_name, password, avatar) VALUES (?, ?, ?, ?)",
-        Object.values(rawData)
-      );
-    } catch (error: any) {
-      return redirect(`/signup?error=${error.sqlMessage || ""}`);
+      const result = await executeQuery("create_user", Object.values(rawData));
+      console.log({ result });
+      redirect("/login");
+    } catch (error) {
+      console.log(error);
     }
     return redirect("/login");
   }

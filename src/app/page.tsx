@@ -9,22 +9,24 @@ import { PostCard } from "@/components/postCard";
 import { Section } from "@/components/section";
 import Link from "next/link";
 import { LogoutButton } from "@/components/buttons";
+import { executeQuery } from "@/db/query";
+import { Note, User } from "@/types";
 import { generateAvatarUrl } from "@/helper/media";
 
-type User = {
-  id: number;
-  student_id: string;
-  password: string;
-  full_name: string;
-  avatar: string;
-};
-
 export default async function Home() {
+  let notes: Note[] = [];
+
   const cookieStore = cookies();
   const user = cookieStore.get("user");
   if (!user) return redirect("/login");
 
   const userData = JSON.parse(user?.value as string) as User;
+  try {
+    const res = await executeQuery<Note[][]>("get_all_notes");
+    notes = res[0];
+  } catch (error) {
+    console.log(error);
+  }
 
   return (
     <div className="h-screen flex justify-center overflow-hidden">
@@ -42,7 +44,11 @@ export default async function Home() {
                 <Link href="/"> Home </Link>
                 <Link href="/"> Saved Notes </Link>
                 <CreateNoteModal
-                  image={generateAvatarUrl(userData.avatar)}
+                  image={
+                    userData.avatar
+                      ? generateAvatarUrl(userData.avatar)
+                      : "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1200px-User-avatar.svg.png"
+                  }
                   name={userData.full_name}
                 />
               </div>
@@ -53,8 +59,12 @@ export default async function Home() {
                   width={40}
                   height={40}
                   className="rounded-full w-10 h-10"
-                  src={generateAvatarUrl(userData.avatar)}
-                  alt=""
+                  src={
+                    userData.avatar
+                      ? generateAvatarUrl(userData.avatar)
+                      : "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/1200px-User-avatar.svg.png"
+                  }
+                  alt="Avatar"
                 />
                 <p className="text-xl font-[500]">{userData.full_name}</p>
               </div>
@@ -63,24 +73,18 @@ export default async function Home() {
         </Section>
         <Section className="min-w-[46%] overflow-auto border-x border-slate-700">
           <div className="flex flex-col">
-            <PostCard
-              title={"Zahin Afsar"}
-              description={"Hello guys!"}
-              image={""}
-              createdAt={"12:00 PM"}
-            />
-            <PostCard
-              title={"Zahin Afsar"}
-              description={"Hello guys!"}
-              image={""}
-              createdAt={"12:00 PM"}
-            />
-            <PostCard
-              title={"Zahin Afsar"}
-              description={"Hello guys!"}
-              image={""}
-              createdAt={"12:00 PM"}
-            />
+            {notes?.length > 0
+              ? notes.map((note) => (
+                  <PostCard
+                    key={note.id}
+                    title={note.title}
+                    description={note.content}
+                    authorImage={note.author_image}
+                    author={note.author_name}
+                    createdAt={note.created_at}
+                  />
+                ))
+              : null}
           </div>
         </Section>
         <Section className="w-[27%] py-5 flex justify-start">
