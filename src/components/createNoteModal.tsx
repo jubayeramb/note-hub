@@ -1,9 +1,8 @@
 "use client";
 
 import { createNote } from "@/app/actions/createNote";
-import { uploadFile } from "@/helper/media";
 import Image from "next/image";
-import { FormEvent, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 /* eslint-disable @next/next/no-img-element */
 import { FiPlusCircle } from "react-icons/fi";
 import { IoMdImage } from "react-icons/io";
@@ -15,8 +14,13 @@ export function CreateNoteModal({
   name: string;
   image: string;
 }) {
+  const form = useRef<HTMLFormElement>(null);
   const [open, setOpen] = useState(false);
   const [images, setImages] = useState<FileList>();
+
+  useEffect(() => {
+    form.current?.reset();
+  }, [open]);
 
   return (
     <>
@@ -29,8 +33,15 @@ export function CreateNoteModal({
       </button>
       <dialog open={open} className="modal bg-[#00000080]">
         <div className="modal-box overflow-auto">
-          <form action={createNote}>
-            <div>
+          <form
+            ref={form}
+            action={(e) => {
+              createNote(e).then(() => {
+                window.location.reload();
+              });
+            }}
+          >
+            <div className="flex flex-col gap-4">
               <div className="flex justify-between items-center">
                 <div className="flex gap-3 items-center">
                   <Image
@@ -50,7 +61,7 @@ export function CreateNoteModal({
               <input
                 type="text"
                 name="title"
-                className="w-full bg-slate-700 rounded-md p-3 mt-6 text-base text-white"
+                className="w-full bg-slate-700 rounded-md p-3 text-base text-white"
                 placeholder="Note Title"
                 required
               />
@@ -58,7 +69,7 @@ export function CreateNoteModal({
               <textarea
                 rows={5}
                 name="content"
-                className="w-full bg-slate-700 rounded-md p-3 mt-6 text-base text-white"
+                className="w-full bg-slate-700 rounded-md p-3 text-base text-white"
                 placeholder="Write your note here..."
               />
 

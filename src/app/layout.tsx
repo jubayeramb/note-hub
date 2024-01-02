@@ -16,7 +16,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // await initDb();
+//  initDb();
   return (
     <html lang="en">
       <body className={inter.className}>{children}</body>

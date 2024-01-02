@@ -11,17 +11,15 @@ import Link from "next/link";
 import { LogoutButton } from "@/components/buttons";
 import { executeQuery } from "@/db/query";
 import { Note, User } from "@/types";
+import { getUser } from "@/helper/user";
 
 export default async function Home() {
   let notes: Note[] = [];
 
-  const cookieStore = cookies();
-  const user = cookieStore.get("user");
-  if (!user) return redirect("/login");
+  const userData = getUser();
 
-  const userData = JSON.parse(user?.value as string) as User;
   try {
-    notes = await executeQuery<Note[]>("get_all_notes");
+    notes = await executeQuery<Note[]>("get_all_notes", [userData.id, userData.id]);
   } catch (error) {
     console.log(error);
   }
@@ -72,6 +70,7 @@ export default async function Home() {
             {notes?.length > 0
               ? notes.map((note) => (
                   <PostCard
+                    id={note.id}
                     key={note.id}
                     title={note.title}
                     description={note.content}
@@ -79,6 +78,9 @@ export default async function Home() {
                     author={note.author_name}
                     createdAt={note.created_at}
                     images={note.images ? note.images.split(",") : []}
+                    isLiked={note.is_liked}
+                    isSaved={note.is_saved}
+                    likeCount={note.like_count}
                   />
                 ))
               : null}

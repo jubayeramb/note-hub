@@ -6,6 +6,9 @@ export type Note = {
   author_image: string;
   created_at: string;
   images: string;
+  is_saved: 1 | 0;
+  is_liked: 1 | 0;
+  like_count: number;
 };
 
 export type User = {
