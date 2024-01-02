@@ -12,14 +12,40 @@ import { LogoutButton } from "@/components/buttons";
 import { executeQuery } from "@/db/query";
 import { Note, User } from "@/types";
 import { getUser } from "@/helper/user";
+import { QueryNames } from "@/db/query/index.type";
 
-export default async function Home() {
+type Props = {
+  searchParams: { tab: string; note: string };
+};
+
+export default async function Home({ searchParams }: Props) {
+  const isSavedNoteTab = searchParams.tab === "saved notes";
+  const isMyNoteTab = searchParams.tab === "my notes";
+  const isNotePage = searchParams.note !== undefined;
+
   let notes: Note[] = [];
+  let mostLoveNotes: Note[] = [];
 
   const userData = getUser();
 
   try {
-    notes = await executeQuery<Note[]>("get_all_notes", [userData.id, userData.id]);
+    const queryName: QueryNames = isSavedNoteTab
+      ? "get_all_saved_notes"
+      : isMyNoteTab
+      ? "get_notes_by_user_id"
+      : isNotePage
+      ? "get_note_by_id"
+      : "get_all_notes";
+    const queryValue = Array.from(
+      { length: isSavedNoteTab || isMyNoteTab ? 3 : 2 },
+      () => userData.id
+    );
+    if (isNotePage) {
+      queryValue.push(+searchParams.note);
+    }
+
+    notes = await executeQuery<Note[]>(queryName, queryValue);
+    mostLoveNotes = await executeQuery<Note[]>("get_most_liked_notes", []);
   } catch (error) {
     console.log(error);
   }
@@ -37,8 +63,9 @@ export default async function Home() {
                 {/* <FiPlusCircle size={30} /> */}
               </div>
               <div className="mt-10 text-lg flex flex-col items-start gap-5">
-                <Link href="/"> Home </Link>
-                <Link href="/"> Saved Notes </Link>
+                <a href="/"> Home </a>
+                <a href="/?tab=saved%20notes"> Saved Notes </a>
+                <a href="/?tab=my%20notes"> My Notes </a>
                 <CreateNoteModal
                   image={
                     userData.avatar ||
@@ -91,12 +118,15 @@ export default async function Home() {
             <div>
               <p className="text-3xl font-extrabold">Most Loved</p>
               <div className="mt-10 text-lg flex flex-col gap-5">
-                <a className="hover:underline cursor-pointer">
-                  Database B Tree notes (Naimul Pathan)
-                </a>
-                <a className="hover:underline cursor-pointer">
-                  Algorithm BFS/DFS (Wahia Tasnim)
-                </a>
+                {mostLoveNotes?.map((note) => (
+                  <a
+                    href={`/?note=${note.id}`}
+                    key={note.id}
+                    className="hover:underline cursor-pointer"
+                  >
+                    {note.title}
+                  </a>
+                ))}
               </div>
             </div>
             <LogoutButton />

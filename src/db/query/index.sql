@@ -24,6 +24,79 @@ ORDER BY
     note.id DESC,
     user.id DESC;
 
+-- get_note_by_id:
+SELECT 
+    note.*, 
+    group_concat(image.image_url) AS images,
+    user.full_name AS author_name, 
+    user.avatar AS author_image,
+    COUNT(DISTINCT liked_note.id) AS like_count,
+    CASE WHEN MAX(liked_note.user_id = ?) THEN 1 ELSE 0 END AS is_liked,
+    CASE WHEN MAX(saved_note.user_id = ?) THEN 1 ELSE 0 END AS is_saved
+FROM note
+LEFT JOIN image ON note.id = image.note_id
+INNER JOIN user ON note.user_id = user.id
+LEFT JOIN liked_note ON note.id = liked_note.note_id
+LEFT JOIN saved_note ON note.id = saved_note.note_id
+WHERE note.id = ?
+GROUP BY note.id
+ORDER BY 
+    note.created_at DESC,
+    note.id DESC,
+    user.id DESC;
+
+-- get_notes_by_user_id:
+SELECT 
+    note.*, 
+    group_concat(image.image_url) AS images,
+    user.full_name AS author_name, 
+    user.avatar AS author_image,
+    COUNT(DISTINCT liked_note.id) AS like_count,
+    CASE WHEN MAX(liked_note.user_id = ?) THEN 1 ELSE 0 END AS is_liked,
+    CASE WHEN MAX(saved_note.user_id = ?) THEN 1 ELSE 0 END AS is_saved
+FROM note
+LEFT JOIN image ON note.id = image.note_id
+INNER JOIN user ON note.user_id = user.id
+LEFT JOIN liked_note ON note.id = liked_note.note_id
+LEFT JOIN saved_note ON note.id = saved_note.note_id
+WHERE note.user_id = ?
+GROUP BY note.id
+ORDER BY 
+    note.created_at DESC,
+    note.id DESC,
+    user.id DESC;
+
+-- get_all_saved_notes:
+SELECT 
+    note.*, 
+    group_concat(image.image_url) AS images,
+    user.full_name AS author_name, 
+    user.avatar AS author_image,
+    COUNT(DISTINCT liked_note.id) AS like_count,
+    CASE WHEN MAX(liked_note.user_id = ?) THEN 1 ELSE 0 END AS is_liked,
+    CASE WHEN MAX(saved_note.user_id = ?) THEN 1 ELSE 0 END AS is_saved
+FROM note
+LEFT JOIN image ON note.id = image.note_id
+INNER JOIN user ON note.user_id = user.id
+LEFT JOIN liked_note ON note.id = liked_note.note_id
+LEFT JOIN saved_note ON note.id = saved_note.note_id
+WHERE saved_note.user_id = ?
+GROUP BY note.id
+ORDER BY 
+    note.created_at DESC,
+    note.id DESC,
+    user.id DESC;
+
+-- get_most_liked_notes:
+SELECT 
+    note.*, 
+    COUNT(DISTINCT liked_note.id) AS like_count
+FROM note
+INNER JOIN liked_note ON note.id = liked_note.note_id
+GROUP BY note.id
+ORDER BY COUNT(DISTINCT liked_note.id) DESC
+LIMIT 5;
+
 -- create_note:
 INSERT INTO note (user_id, title, content) VALUES (?, ?, ?);
 INSERT INTO image (note_id, image_url)

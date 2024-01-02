@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS user (
     full_name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    last_post_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY (student_id)
 );
@@ -75,3 +76,13 @@ CREATE TABLE IF NOT EXISTS liked_note (
     CONSTRAINT fk_like_user_id FOREIGN KEY (user_id) REFERENCES user (id),
     CONSTRAINT fk_like_note_id FOREIGN KEY (note_id) REFERENCES note (id)
 );
+
+-- trigger to note table to update last_post_created_at column in user table
+DELIMITER //
+CREATE TRIGGER IF NOT EXISTS update_last_post_created_at
+AFTER INSERT ON note
+FOR EACH ROW
+BEGIN
+    UPDATE user SET last_post_created_at = NEW.created_at WHERE id = NEW.user_id;
+END//
+DELIMITER ;
